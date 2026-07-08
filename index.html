@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Beetle Squisher</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
 
+        .container {
+            max-width: 500px;
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 2px solid #4a4a4a;
+        }
+
+        h1 {
+            color: #a3e635;
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .counter {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #60a5fa;
+            margin: 15px 0;
+        }
+
+        #squish-btn {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        #squish-btn:hover {
+            background-color: #b91c1c;
+        }
+
+        #squish-btn:active {
+            transform: scale(0.95);
+        }
+
+        #message-box {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #333;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            border-left: 5px solid #4a4a4a;
+        }
+
+        .success {
+            background-color: #064e3b !important;
+            border-left-color: #10b981 !important;
+            color: #10b981;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🪲 Beetle Squisher 🪲</h1>
+    <p>One of these beetles swallowed the micro-capsule containing the final coordinates. Start hunting!</p>
+    
+    <div class="counter">Beetles Squished: <span id="count">0</span></div>
+    
+    <button id="squish-btn">SQUISH!</button>
+    
+    <div id="message-box" id="message">Click the button to start squishing...</div>
+</div>
+
+<script>
+    // --- CONFIGURATION ---
+    // Change these to your actual final cache coordinates!
+    const finalCoordinates = "N 41° 43.734′ W 88° 23.109"; 
+    const requiredSquishes = 12;
+    // ---------------------
+
+    let squishCount = 0;
+
+    const wrongBeetleMessages = [
+        "Crunch! Nope, just regular beetle guts. Try again.",
+        "Splat! That was a Stag Beetle. Definitely didn't have coordinates.",
+        "Squish! Gross... but no capsule inside this one.",
+        "Pop! A June Bug down, but the cache coordinates remain missing.",
+        "Smush! You wiped out a rare specimen. Still not the right one, though.",
+        "Crunch! That one looked important, but it wasn't.",
+        "Splat! Your boots are getting messy. Keep looking!",
+        "Squish! It looks like this beetle just ate some leaf mold. No coordinates.",
+        "Crack! Oof, wrong bug. Your target is still out there.",
+        "Smush! Nope, nothing but chitin and sorrow here."
+    ];
+
+    const button = document.getElementById('squish-btn');
+    const countDisplay = document.getElementById('count');
+    const messageBox = document.getElementById('message-box');
+
+    button.addEventListener('click', () => {
+        if (squishCount >= requiredSquishes) {
+            // Already finished, prevent accidental extra clicks resetting the message
+            return;
+        }
+
+        squishCount++;
+        countDisplay.textContent = squishCount;
+
+        if (squishCount >= requiredSquishes) {
+            // Success state achieved!
+            button.disabled = true;
+            button.style.backgroundColor = '#4b5563';
+            button.style.cursor = 'not-allowed';
+            button.textContent = "No More Beetles!";
+            
+            messageBox.className = "success";
+            messageBox.innerHTML = `<strong>SUCCESS!</strong><br>CRUNCH... Jackpot! You found the right bug. The micro-capsule rolls out into your hand:<br><br><span style="font-size: 1.4rem; color: #fff;">${finalCoordinates}</span>`;
+        } else {
+            // Pick a random failure message
+            const randomIndex = Math.floor(Math.random() * wrongBeetleMessages.length);
+            messageBox.textContent = wrongBeetleMessages[randomIndex];
+            
+            // Subtly change the border color temporarily on click for feedback
+            messageBox.style.borderLeftColor = '#dc2626';
+            setTimeout(() => {
+                if (squishCount < requiredSquishes) {
+                    messageBox.style.borderLeftColor = '#4a4a4a';
+                }
+            }, 200);
+        }
+    });
+</script>
+
+</body>
+</html>
